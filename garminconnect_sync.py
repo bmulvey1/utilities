@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+import sys
 import pwd
 from getpass import getpass
 
@@ -97,6 +98,10 @@ last_cycling_date = datetime.datetime.strptime(
 
 new_activities = []
 
+if not os.path.exists(computer_dir):
+    sys.stderr.buffer.write(b'Bike computer directory not valid\n')
+    sys.exit(-1)
+
 for file in os.listdir(computer_dir):
     clean_filename = file.strip('.fit')
     activity_date = datetime.datetime.strptime(
@@ -106,6 +111,12 @@ for file in os.listdir(computer_dir):
 
 print(new_activities)
 
+activity_upload_responses = []
+
 for file in new_activities:
     full_path = os.path.join(computer_dir, file)
-    api.upload_activity(full_path)
+    resp = api.upload_activity(full_path)
+    activity_upload_responses.append(resp)
+
+print(activity_upload_responses)
+
